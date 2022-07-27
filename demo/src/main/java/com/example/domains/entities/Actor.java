@@ -4,10 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import com.example.domains.core.entities.EntityBase;
 import com.example.domains.core.validations.NIF;
@@ -38,18 +35,17 @@ public class Actor extends EntityBase<Actor> implements Serializable {
 
 	@Column(name="first_name")
 	@NotBlank
-	@Length(min = 2, max = 45)
+	@Size(min = 2, max = 45)
 	@JsonProperty("nombre")
 	private String firstName;
 
 	@Column(name="last_name")
 	@NotBlank(message = "No puede estar en blanco")
-	@Length(min = 2, max = 45)
+	@Size(min = 2, max = 45)
 	@JsonProperty("apellidos")
 	private String lastName;
 
-	@Column(name="last_update")
-	@Generated(GenerationTime.ALWAYS)
+	@Column(name="last_update", insertable = false, updatable = false)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
 	private Timestamp lastUpdate;
 

@@ -6,10 +6,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-import org.hibernate.validator.constraints.Length;
-
 import com.example.domains.core.entities.EntityBase;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,8 +31,7 @@ public class Category extends EntityBase<Category> implements Serializable {
 	@JsonProperty("id")
 	private int categoryId;
 
-	@Column(name="last_update")
-	@Generated(value = GenerationTime.ALWAYS)
+	@Column(name="last_update", insertable = false, updatable = false)
 	@PastOrPresent
 	@JsonIgnore
 	private Timestamp lastUpdate;

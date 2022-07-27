@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
 import com.example.domains.core.entities.EntityBase;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -89,9 +86,8 @@ public class Film extends EntityBase<Film> implements Serializable {
 	@Lob
 	private String description;
 
-	@Column(name="last_update")
-	@Generated(value = GenerationTime.ALWAYS)
-	private Timestamp lastUpdate = new Timestamp(System.currentTimeMillis());
+	@Column(name="last_update", insertable = false, updatable = false)
+	private Timestamp lastUpdate;
 
 	@Positive
 	private int length;

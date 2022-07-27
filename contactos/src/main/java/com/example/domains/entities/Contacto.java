@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -29,7 +27,7 @@ public class Contacto {
 	@NotBlank
 	@Size(min=2, max=50)
 	private String nombre;
-	@Length(min=2, max=50)
+	@Size(min=2, max=50)
 	private String apellidos;
 	@Pattern(regexp = "^(\\d{3}\\s){2}\\d{3}$")
 	private String telefono;
@@ -50,7 +48,7 @@ public class Contacto {
 		direcciones = new ArrayList<>();
 	}
 	public Contacto(String id, String tratamiento, @NotBlank @Size(min = 2, max = 2)String nombre,
-			@Length(min = 2, max = 2) String apellidos, @Pattern(regexp = "^(\\d{3}\\s){2}\\d{3}$") String telefono,
+			@Size(min = 2, max = 2) String apellidos, @Pattern(regexp = "^(\\d{3}\\s){2}\\d{3}$") String telefono,
 			@Email String email, @Pattern(regexp = "[HM]") String sexo, @Past LocalDate nacimiento, @URL String avatar,
 			boolean conflictivo, String icono) {
 		this();

@@ -3,9 +3,6 @@ package com.example.domains.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
 import java.sql.Timestamp;
 
 
@@ -22,8 +19,7 @@ public class FilmActor implements Serializable {
 	@EmbeddedId
 	private FilmActorPK id;
 
-	@Column(name="last_update")
-	@Generated(value = GenerationTime.ALWAYS)
+	@Column(name="last_update", insertable = false, updatable = false)
 	private Timestamp lastUpdate;
 
 	//bi-directional many-to-one association to Actor

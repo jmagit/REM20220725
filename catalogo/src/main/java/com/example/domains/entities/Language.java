@@ -5,9 +5,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
 import com.example.domains.core.entities.EntityBase;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,10 +41,9 @@ public class Language extends EntityBase<Language> implements Serializable {
 	@JsonView(Language.Partial.class)
 	private String name;
 
-	@Column(name="last_update")
-	@Generated(value = GenerationTime.ALWAYS)
+	@Column(name="last_update", insertable = false, updatable = false)
 	@JsonView(Language.Complete.class)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
 	private Timestamp lastUpdate;
 
 	//bi-directional many-to-one association to Film
