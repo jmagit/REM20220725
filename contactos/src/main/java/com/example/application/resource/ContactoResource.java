@@ -56,6 +56,7 @@ public class ContactoResource {
 	}
 
 	@GetMapping(path = "/{id}")
+	@Operation(summary = "Consultar un contacto")
 	public Contacto getOne(@PathVariable String id) throws Exception {
 		Optional<Contacto> rslt = dao.findById(id);
 		if (!rslt.isPresent())
@@ -66,6 +67,7 @@ public class ContactoResource {
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
+	@Operation(summary = "Creación de un contacto")
 	public ResponseEntity<Object> add(@Valid @RequestBody Contacto item) throws Exception {
 		if (item.getId() != null && dao.findById(item.getId()).isPresent())
 			throw new InvalidDataException("Duplicate key");
@@ -77,6 +79,7 @@ public class ContactoResource {
 
 	@Secured({ "ROLE_USER" })
 	@PutMapping(path = "/{id}")
+	@Operation(summary = "Modificación de un contacto")
 	public Contacto modify(@PathVariable String id, @Valid @RequestBody Contacto item) throws Exception {
 		if (!id.equals(item.getId()))
 			throw new BadRequestException("No coinciden los ID");
@@ -88,6 +91,7 @@ public class ContactoResource {
 	@PreAuthorize("authenticated")
 	@DeleteMapping(path = "/{id}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
+	@Operation(summary = "Eliminación de un contacto")
 	public void delete(@PathVariable String id) throws Exception {
 		try {
 			dao.deleteById(id);
