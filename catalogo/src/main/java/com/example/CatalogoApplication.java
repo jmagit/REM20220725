@@ -31,12 +31,13 @@ public class CatalogoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CatalogoApplication.class, args);
 	}
-@Bean
-public OpenApiCustomiser sortSchemasAlphabetically() {
-    return openApi -> {
-        var schemas = openApi.getComponents().getSchemas();
-        openApi.getComponents().setSchemas(new TreeMap<>(schemas));
-    };
-}
+
+	@Bean
+	public OpenApiCustomiser sortSchemasAlphabetically() {
+	    return openApi -> {
+	        var schemas = openApi.getComponents().getSchemas();
+	        openApi.getComponents().setSchemas(new TreeMap<>(schemas));
+	    };
+	}
 
 }

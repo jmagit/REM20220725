@@ -3,7 +3,9 @@ package com.example;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.TreeMap;
 
+import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,15 +21,22 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import com.example.domains.entities.Contacto;
 import com.example.infraestructure.repositories.ContactoRepository;
 
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.oas.annotations.EnableOpenApi;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 
-@EnableOpenApi
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Microservicio: Contactos",
+                version = "1.0",
+                description = "Ejemplo de Microservicio utilizando la base de datos **mongodb**.",
+                license = @License(name = "Apache 2.0", url = "https://www.apache.org/licenses/LICENSE-2.0.html"),
+                contact = @Contact(name = "Javier Martín", url = "https://github.com/jmagit", email = "support@example.com")
+        ),
+        externalDocs = @ExternalDocumentation(description = "Documentación del proyecto", url = "https://github.com/jmagit/REM20220725")
+)
 @EnableEurekaClient
 @SpringBootApplication
 public class ContactosApplication implements CommandLineRunner {
@@ -36,13 +45,21 @@ public class ContactosApplication implements CommandLineRunner {
 		SpringApplication.run(ContactosApplication.class, args);
 	}
 
-	@Autowired
-	ContactoRepository dao;
+	@Bean
+	public OpenApiCustomiser sortSchemasAlphabetically() {
+	    return openApi -> {
+	        var schemas = openApi.getComponents().getSchemas();
+	        openApi.getComponents().setSchemas(new TreeMap<>(schemas));
+	    };
+	}
 
 	@Bean
 	public ValidatingMongoEventListener validatingMongoEventListener(LocalValidatorFactoryBean factory) {
 		return new ValidatingMongoEventListener(factory);
 	}
+
+	@Autowired
+	ContactoRepository dao;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -77,22 +94,6 @@ public class ContactosApplication implements CommandLineRunner {
 //		System.out.println("Borrado");
 //		encontrado = dao.findById(id);
 //		System.out.println(encontrado.isPresent() ? encontrado.get() : "No encontrado");
-	}
-	
-	@Bean
-	public Docket api() {                
-   	    return new Docket(DocumentationType.SWAGGER_2)          
-	      .select()
-	      .apis(RequestHandlerSelectors.basePackage("com.example.application.resource"))
-	      .paths(PathSelectors.ant("/**"))
-	      .build()
-	      .apiInfo(new ApiInfoBuilder()
-	                .title("Microservicio: Contactos")
-	                .description("Ejemplo de Microservicio utilizando la base de datos **mongodb**.")
-	                .version("1.0")
-	                .license("Apache License Version 2.0")
-	                .contact(new Contact("Yo Mismo", "http://www.example.com", "myeaddress@example.com"))
-	                .build());
 	}
 
 }

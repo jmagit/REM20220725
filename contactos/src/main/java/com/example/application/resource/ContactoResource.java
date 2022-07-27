@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,8 +35,7 @@ import com.example.exceptions.InvalidDataException;
 import com.example.exceptions.NotFoundException;
 import com.example.infraestructure.repositories.ContactoRepository;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.Value;
 
 @RestController
@@ -45,13 +45,13 @@ public class ContactoResource {
 	private ContactoRepository dao;
 
 	@GetMapping
-	@ApiOperation(value = "Listar todos")
+	@Operation(summary = "Listar todos")
 	public List<Contacto> getAll() {
 		return dao.findAll();
 	}
 	
 	@GetMapping(params = "page")
-	public Page<Contacto> getAll(@ApiParam(allowEmptyValue = true) Pageable page) {
+	public Page<Contacto> getAll(@ParameterObject Pageable page) {
 		return dao.findAll(page);
 	}
 

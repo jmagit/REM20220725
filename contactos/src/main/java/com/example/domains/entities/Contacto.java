@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
@@ -17,20 +18,20 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Document("contactos")
-@ApiModel(value = "Contacto", description = "Datos de la persona de contacto")
+@Schema(description = "Datos de la persona de contacto")
 public class Contacto {
 	@Id
 	private String id;
 	private String tratamiento;
 	@NotBlank
-	@Length(min=2, max=50)
+	@Size(min=2, max=50)
 	private String nombre;
 	@Length(min=2, max=50)
 	private String apellidos;
-	@Digits(integer = 9, fraction = 0)
+	@Pattern(regexp = "^(\\d{3}\\s){2}\\d{3}$")
 	private String telefono;
 	@Email
 	private String email;
@@ -48,8 +49,8 @@ public class Contacto {
 		super();
 		direcciones = new ArrayList<>();
 	}
-	public Contacto(String id, String tratamiento, @NotBlank @Length(min = 2, max = 2) String nombre,
-			@Length(min = 2, max = 2) String apellidos, @Digits(integer = 9, fraction = 0) String telefono,
+	public Contacto(String id, String tratamiento, @NotBlank @Size(min = 2, max = 2)String nombre,
+			@Length(min = 2, max = 2) String apellidos, @Pattern(regexp = "^(\\d{3}\\s){2}\\d{3}$") String telefono,
 			@Email String email, @Pattern(regexp = "[HM]") String sexo, @Past LocalDate nacimiento, @URL String avatar,
 			boolean conflictivo, String icono) {
 		this();

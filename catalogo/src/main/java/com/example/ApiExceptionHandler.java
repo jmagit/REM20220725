@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 
 @RestControllerAdvice
@@ -94,7 +95,7 @@ public class ApiExceptionHandler {
 		return new ErrorMessage(404, exception.getMessage(), request.getRequestURI(), null);
 	}
 
-	@ExceptionHandler({ BadRequestException.class, DuplicateKeyException.class })
+	@ExceptionHandler({ BadRequestException.class, DuplicateKeyException.class, HttpMessageNotReadableException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ErrorMessage badRequest(Exception exception) {
 		return new ErrorMessage(400, exception.getMessage(), null, null);

@@ -1,10 +1,13 @@
 package com.example.domains.entities;
 
+import javax.validation.constraints.Pattern;
+
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Direccion {
 	private String calle;
 	@Field("codigo")
+	@Pattern(regexp = "^\\d{4,5}$")
 	private String codigoPostal;
 	private String provincia;
 	private String pais;
