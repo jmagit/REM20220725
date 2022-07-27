@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
 		if(item == null)
 			throw new InvalidDataException("Faltan los datos");
 		if(item.isInvalid())
-			throw new InvalidDataException(item.getErrorsString());
+			throw new InvalidDataException(item.getErrorsString(), item.getErrorsFields());
 		if(getOne(item.getCategoryId()).isPresent())
 			throw new DuplicateKeyException();
 		return dao.save(item);
@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 		if(item == null)
 			throw new InvalidDataException("Faltan los datos");
 		if(item.isInvalid())
-			throw new InvalidDataException(item.getErrorsString());
+			throw new InvalidDataException(item.getErrorsString(), item.getErrorsFields());
 		if(getOne(item.getCategoryId()).isEmpty())
 			throw new NotFoundException();
 		return dao.save(item);

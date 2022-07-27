@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.Pattern;
+
 import com.example.domains.entities.Actor;
 import com.example.domains.entities.Category;
 import com.example.domains.entities.Film;
@@ -24,28 +26,37 @@ import lombok.NoArgsConstructor;
 public class FilmEditDTO {
 	@Schema(description = "Identificador de la pelicula", required = true, accessMode = AccessMode.READ_ONLY)
 	private int filmId;
-	@Schema(description = "Descripcion de la pelicula" )
+	@Schema(description = "Una breve descripción o resumen de la trama de la película")
 	private String description;
-	@Schema(description = "Duración de la pelicula", required = true)
+	@Schema(description = "La duración de la película, en minutos", required = true)
 	private int length;
-	@Schema(description = "Clasificación de la pelicula", allowableValues = "G, PG, PG-13, R, NC-17")
+	@Schema(description = "La clasificación por edades asignada a la película", allowableValues = {"G", "PG", "PG-13", "R", "NC-17"})
+	@Pattern(regexp = "^(G|PG|PG-13|R|NC-17)$")
 	private String rating;
+	@Schema(description = "El año en que se estrenó la película")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy")
 	private Short releaseYear;
+	@Schema(description = "La duración del período de alquiler, en días")
 	private byte rentalDuration;
+	@Schema(description = "El coste de alquilar la película por el período establecido")
 	private BigDecimal rentalRate;
+	@Schema(description = "El importe cobrado al cliente si la película no se devuelve o se devuelve en un estado dañado")
 	private BigDecimal replacementCost;
-	@Schema(description = "Titulo de la pelicula", required = true, allowableValues = "Un maximo de 255 caracteres")
+	@Schema(description = "El título de la película", required = true)
 	private String title;
+	@Schema(description = "El identificador del idioma de la película")
 	private Integer languageId;
+	@Schema(description = "El identificador del idioma original de la película")
 	private Integer languageVOId;
+	@Schema(description = "La lista de identificadores de actores que participan en la película")
 	private List<Integer> actors = new ArrayList<Integer>();
+	@Schema(description = "La lista de identificadores de categorías asignadas a la película")
 	private List<Integer> categories = new ArrayList<Integer>();
 
 	public Film update(Film target) {
 		target.setDescription(description);
 		if(target.getLength() != length) target.setLength(length);
-		target.setRating(rating);
+		target.setRating(rating == null ? null : Film.Rating.getEnum(rating));
 		target.setReleaseYear(releaseYear);
 		target.setRentalDuration(rentalDuration);
 		target.setRentalRate(rentalRate);
@@ -86,7 +97,7 @@ public class FilmEditDTO {
 				source.getFilmId(), 
 				source.getDescription(),
 				source.getLength(),
-				source.getRating(),
+				source.getRating() == null ? null : source.getRating().getValue(),
 				source.getReleaseYear(),
 				source.getRentalDuration(),
 				source.getRentalRate(),
@@ -105,7 +116,7 @@ public class FilmEditDTO {
 				source.getFilmId(), 
 				source.getDescription(),
 				source.getLength(),
-				source.getRating(),
+				source.getRating() == null ? null : Film.Rating.getEnum(source.getRating()),
 				source.getReleaseYear(),
 				source.getRentalDuration(),
 				source.getRentalRate(),

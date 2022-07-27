@@ -2,7 +2,6 @@ package com.example.domains.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -22,6 +21,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -33,6 +33,53 @@ import java.util.List;
 @NamedQuery(name="Film.findAll", query="SELECT f FROM Film f")
 public class Film extends EntityBase<Film> implements Serializable {
 	private static final long serialVersionUID = 1L;
+	public static enum Rating {
+	    GENERAL_AUDIENCES("G"),
+	    PARENTAL_GUIDANCE_SUGGESTED("PG"),
+	    PARENTS_STRONGLY_CAUTIONED("PG-13"),
+	    RESTRICTED("R"),
+	    ADULTS_ONLY("NC-17");
+
+	    String value;
+	    
+	    Rating(String value) {
+	        this.value = value;
+	    }
+
+	    public String getValue() {
+	        return value;
+	    }
+		public static Rating getEnum(String value) {
+			switch (value) {
+			case "G": return Rating.GENERAL_AUDIENCES;
+			case "PG": return Rating.PARENTAL_GUIDANCE_SUGGESTED;
+			case "PG-13": return Rating.PARENTS_STRONGLY_CAUTIONED;
+			case "R": return Rating.RESTRICTED;
+			case "NC-17": return Rating.ADULTS_ONLY;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + value);
+			}
+		}
+		public static final String[] VALUES = {"G", "PG", "PG-13", "R", "NC-17"};
+	}
+	@Converter
+	private static class RatingConverter implements AttributeConverter<Rating, String> {
+	    @Override
+	    public String convertToDatabaseColumn(Rating rating) {
+	        if (rating == null) {
+	            return null;
+	        }
+	        return rating.getValue();
+	    }
+	    @Override
+	    public Rating convertToEntityAttribute(String value) {
+	        if (value == null) {
+	            return null;
+	        }
+
+	        return Rating.getEnum(value);
+	    }
+	}
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -49,7 +96,8 @@ public class Film extends EntityBase<Film> implements Serializable {
 	@Positive
 	private int length;
 
-	private String rating;
+	@Convert(converter = RatingConverter.class)
+	private Rating rating;
 
 	//@Temporal(TemporalType.DATE)
 	@Column(name="release_year")
@@ -63,11 +111,13 @@ public class Film extends EntityBase<Film> implements Serializable {
 
 	@Column(name="rental_rate")
 	@Positive
+	@DecimalMin(value = "0.0", inclusive = false)
+    @Digits(integer=2, fraction=2)
 	private BigDecimal rentalRate;
 
 	@Column(name="replacement_cost")
 	@DecimalMin(value = "0.0", inclusive = false)
-    @Digits(integer=2, fraction=2)
+    @Digits(integer=3, fraction=2)
 	private BigDecimal replacementCost;
 
 	@NotBlank
@@ -102,7 +152,7 @@ public class Film extends EntityBase<Film> implements Serializable {
 		this.filmId = filmId;
 	}
 
-	public Film(int filmId, String description, int length, String rating, Short releaseYear, byte rentalDuration,
+	public Film(int filmId, String description, int length, Rating rating, Short releaseYear, byte rentalDuration,
 			BigDecimal rentalRate, BigDecimal replacementCost, String title, Language language, Language languageVO) {
 		this.filmId = filmId;
 		this.description = description;
@@ -153,11 +203,11 @@ public class Film extends EntityBase<Film> implements Serializable {
 		this.length = length;
 	}
 
-	public String getRating() {
+	public Rating getRating() {
 		return this.rating;
 	}
 
-	public void setRating(String rating) {
+	public void setRating(Rating rating) {
 		this.rating = rating;
 	}
 
@@ -269,6 +319,23 @@ public class Film extends EntityBase<Film> implements Serializable {
 		filmCategory.setFilm(null);
 
 		return filmCategory;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(filmId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Film other = (Film) obj;
+		return filmId == other.filmId;
 	}
 
 }

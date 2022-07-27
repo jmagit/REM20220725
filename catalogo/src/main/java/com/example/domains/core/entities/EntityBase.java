@@ -1,5 +1,7 @@
 package com.example.domains.core.entities;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -18,23 +20,36 @@ public abstract class EntityBase<E> {
 	public Set<ConstraintViolation<E>> getErrors() {
 		return validator.validate((E) this);
 	}
-	
+
 	@JsonIgnore
 	@Transient
 	public String getErrorsString() {
 		Set<ConstraintViolation<E>> lst = getErrors();
-		if(lst.isEmpty()) return "";
+		if (lst.isEmpty())
+			return "";
 		StringBuilder sb = new StringBuilder("ERRORES:");
 		lst.forEach(item -> sb.append(" " + item.getPropertyPath() + ": " + item.getMessage() + "."));
 		return sb.toString();
 	}
-	
+
+	@JsonIgnore
+	@Transient
+	public Map<String, String> getErrorsFields() {
+		Set<ConstraintViolation<E>> lst = getErrors();
+		if (lst.isEmpty())
+			return null;
+		Map<String, String> errors = new HashMap<>();
+		for (var item : lst)
+			errors.put(item.getPropertyPath().toString(), item.getMessage());
+		return errors;
+	}
+
 	@Transient
 	@JsonIgnore
 	public boolean isValid() {
 		return getErrors().size() == 0;
 	}
-	
+
 	@Transient
 	@JsonIgnore
 	public boolean isInvalid() {

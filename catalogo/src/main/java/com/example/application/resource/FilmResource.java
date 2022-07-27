@@ -3,8 +3,10 @@ package com.example.application.resource;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -45,6 +47,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -155,6 +158,19 @@ public class FilmResource {
 			throw new NotFoundException();
 		return rslt.get().getFilmCategories().stream().map(item -> item.getCategory()).toList();
 	}
+	
+	@GetMapping(path = "/clasificaciones")
+	@Operation(summary = "Listado de las clasificaciones por edades")
+	public List<Map<String, String>> getClasificaciones() {
+		return List.of(
+				Map.of("key", "G", "value", "Todos los públicos"), 
+				Map.of("key", "PG", "value", "Guía paternal sugerida"), 
+				Map.of("key", "PG-13", "value", "Guía paternal estricta"), 
+				Map.of("key", "R", "value", "Restringido"), 
+				Map.of("key", "NC-17", "value", "Prohibido para audiencia de 17 años y menos")
+				);
+	}
+
 
 	@Operation(summary = "Añadir una nueva pelicula")
 	@ApiResponse(responseCode = "201", description = "Pelicula añadida")
@@ -165,7 +181,7 @@ public class FilmResource {
 	public ResponseEntity<Object> add(@Valid @RequestBody FilmEditDTO item) throws Exception {
 		Film rslt = FilmEditDTO.from(item);
 		if (rslt.isInvalid())
-			throw new InvalidDataException(rslt.getErrorsString());
+			throw new InvalidDataException(rslt.getErrorsString(), rslt.getErrorsFields());
 		if (dao.findById(item.getFilmId()).isPresent())
 			throw new InvalidDataException("Duplicate key");
 		var f = dao.save(rslt);
@@ -186,10 +202,10 @@ public class FilmResource {
 			@Parameter(description = "Identificador de la pelicula", required = true) @PathVariable int id,
 			@Valid @RequestBody FilmEditDTO item) throws Exception {
 		if (item.getFilmId() != id)
-			throw new BadRequestException("No coinciden los ID");
+			throw new BadRequestException("No coinciden los identificadores");
 		Film rslt = FilmEditDTO.from(item);
 		if (rslt.isInvalid())
-			throw new InvalidDataException(rslt.getErrorsString());
+			throw new InvalidDataException(rslt.getErrorsString(), rslt.getErrorsFields());
 		Optional<Film> act = dao.findById(item.getFilmId());
 		if (!act.isPresent())
 			throw new NotFoundException("Missing item");

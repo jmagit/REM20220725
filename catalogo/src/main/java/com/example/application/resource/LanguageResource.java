@@ -77,7 +77,7 @@ public class LanguageResource {
 	@JsonView(Language.Partial.class)
 	public ResponseEntity<Object> add(@Valid @RequestBody Language item) throws Exception {
 		if (item.isInvalid())
-			throw new InvalidDataException(item.getErrorsString());
+			throw new InvalidDataException(item.getErrorsString(), item.getErrorsFields());
 		if (dao.findById(item.getLanguageId()).isPresent())
 			throw new InvalidDataException("Duplicate key");
 		dao.save(item);
@@ -92,7 +92,7 @@ public class LanguageResource {
 		if (item.getLanguageId() != id)
 			throw new BadRequestException("No coinciden los ID");
 		if (item.isInvalid())
-			throw new InvalidDataException(item.getErrorsString());
+			throw new InvalidDataException(item.getErrorsString(), item.getErrorsFields());
 		if (!dao.findById(item.getLanguageId()).isPresent())
 			throw new NotFoundException();
 		dao.save(item);

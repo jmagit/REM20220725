@@ -100,24 +100,20 @@ public class ApiExceptionHandler {
 		return new ErrorMessage(400, exception.getMessage(), null, null);
 	}
 
-	@ExceptionHandler({ InvalidDataException.class })
+	@ExceptionHandler({ InvalidDataException.class, MethodArgumentNotValidException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ErrorMessage invalidData(Exception exception) {
-		return new ErrorMessage(400, "Datos invalidos", exception.getMessage(), null);
-	}
-
-	@ExceptionHandler({ MethodArgumentNotValidException.class })
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public ErrorMessage invalidDataValid(BindException exception) {
 		Map<String, String> errors = null;
-		if(exception.hasFieldErrors()) {
+		if(exception instanceof InvalidDataException ex && ex.hasErrors()) {
+			errors = ex.getErrors();
+		} else if(exception instanceof BindException ex && ex.hasFieldErrors()) {
 			errors = new HashMap<>();
-			for(var item: exception.getFieldErrors())
+			for(var item: ex.getFieldErrors())
 				errors.put(item.getField(), item.getDefaultMessage());
 		}
-		return new ErrorMessage(400, "Datos invalidos", null, errors);
+		return new ErrorMessage(400, "Datos invalidos", exception.getMessage(), errors);
 	}
-	
+
 
 	@ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
 	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
