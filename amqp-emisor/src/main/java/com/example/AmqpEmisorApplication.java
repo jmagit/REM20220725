@@ -55,7 +55,7 @@ public class AmqpEmisorApplication {
 	
     @Bean
     public Queue saludosQueue() {
-        return new Queue("demo.saludos", false, false, true);
+        return new Queue("demo.saludos");
     }
     
     @Bean
