@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.websocket.server.PathParam;
 
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +48,7 @@ public class ActorResource {
 	ActorService srv;
 	
 	@GetMapping
-	public List<ActorDTO> getAll(@RequestParam(required = false) String sort) {
+	public List<ActorDTO> getAll(@ParameterObject @RequestParam(required = false) String sort) {
 		if(sort== null)
 			return srv.getByProjection(ActorDTO.class);
 		else
@@ -55,8 +56,8 @@ public class ActorResource {
 	}
 	
 	@GetMapping(params = "page")
-	public Page<ActorDTO> getAllPageable(Pageable item) {
-		return srv.getByProjection(item, ActorDTO.class);
+	public Page<ActorDTO> getAllPageable(@ParameterObject Pageable pageable) {
+		return srv.getByProjection(pageable, ActorDTO.class);
 	}
 
 	@GetMapping(path = "/{id}")
