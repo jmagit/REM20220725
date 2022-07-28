@@ -33,7 +33,8 @@ public class ConsultasResource {
 	
 	@GetMapping(path = "/uno/{id}")
 	public ActorRecibido dameUno(@PathVariable int id) {
-		return srvRest.getForObject("http://localhost:8010/v1/actores/{id}", ActorRecibido.class, id);
+		return srvRest.getForObject("lb://catalogo-service/v1/actores/{id}", ActorRecibido.class, id);
+//		return srvRest.getForObject("http://localhost:8010/v1/actores/{id}", ActorRecibido.class, id);
 	}
 
 	@GetMapping(path = "/muchos")
