@@ -85,4 +85,12 @@ public class ConsultasResource {
 	public String dameConfig() {
 		return miConfigString;
 	}
+	
+	@GetMapping(path = "/saltos/{id}")
+	@SecurityRequirement(name = "bearerAuth")
+	public ActorRecibido saltos(@PathVariable int id) {
+		proxy.damePeliculas();
+		return srvRest.getForObject("lb://demo-service/v1/consultas/uno/{id}", ActorRecibido.class, id);
+//		return srvRest.getForObject("http://localhost:8010/v1/actores/{id}", ActorRecibido.class, id);
+	}
 }
