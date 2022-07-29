@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.example.applications.dtos.ActorRecibido;
 import com.example.applications.dtos.Pelicula;
@@ -17,7 +18,7 @@ public interface CatalogoProxy {
 	String damaInicio();
 	
 	@GetMapping(path = "/v1/actores/{id}")
-	ActorRecibido dameUnActor(@PathVariable int id);
+	ActorRecibido dameUnActor(@PathVariable int id, @RequestHeader String authorization);
 	
 	@GetMapping(path = "/v1/peliculas?mode=short")
 	List<Pelicula> damePeliculas();

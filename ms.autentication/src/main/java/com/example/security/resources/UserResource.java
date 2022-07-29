@@ -21,13 +21,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.security.dtos.AuthToken;
 import com.example.security.dtos.BasicCredential;
 import com.example.security.repositories.UsuarioRepositoy;
 import com.netflix.eureka.registry.rule.AlwaysMatchInstanceStatusRule;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
 //	@CrossOrigin(origins = "http://localhost:4200", allowCredentials="true", methods={RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS })
@@ -35,6 +34,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class UserResource {
 	@Value("${jwt.secret}")
 	private String SECRET;
+	@Value("${jwt.expiracion.mim:10}")
+	private int EXPIRES_IN_MINUTES = 10;
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	@Autowired
@@ -45,25 +46,24 @@ public class UserResource {
 	@PostMapping(path = "/login", consumes = "application/json")
 	public AuthToken loginJSON(@Valid @RequestBody BasicCredential credential) {
 		var item = dao.findById(credential.getUsername());
-		System.out.println(credential.getUsername());
 		if (item.isEmpty() || !passwordEncoder.matches(credential.getPassword(), item.get().getPassword()))
 			return new AuthToken();
 		var usr = item.get();
-		String token = Jwts.builder()
-				.setId("MicroserviciosJWT")
-				.setSubject(usr.getIdUsuario())
-				.claim("authorities", usr.getRoles())
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 600000))
-				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
-				.compact();
+		String token = JWT.create()
+				.withIssuer("MicroserviciosJWT")
+				.withClaim("usr", usr.getIdUsuario())
+				.withArrayClaim("roles", usr.getRoles().toArray(new String[0]))
+				.withIssuedAt(new Date(System.currentTimeMillis())).withNotBefore(new Date())
+				.withExpiresAt(new Date(System.currentTimeMillis() + EXPIRES_IN_MINUTES * 60_000))
+				.sign(Algorithm.HMAC256(SECRET));
 		return new AuthToken(true, "Bearer " + token, usr.getNombre());
 	}
 
 	/*
-	 * /register (anonimo) /changepassword /profile (Authorization) (get, put) menos
-	 * la contraseña /users (Admin) (get, post, put, delete) + roles menos la
-	 * contraseña
+	 * /register (anonimo) 
+	 * /changepassword 
+	 * /profile (Authorization) (get, put) menos la contraseña 
+	 * /users (Admin) (get, post, put, delete) + roles menos la contraseña
 	 *
 	 */
 }

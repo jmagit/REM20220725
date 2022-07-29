@@ -19,32 +19,34 @@ public class TestResource {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
-	@GetMapping("/seguro")
+	@GetMapping("/solo-autenticados")
 	@SecurityRequirement(name = "bearerAuth")
 	public String get(@Parameter(hidden = true) @RequestHeader String authorization, Principal principal) {
-		return "El usuario está autenticado: " + principal.getName() + "\nAuthorization: " + authorization;
+		return "El usuario está autenticado\n  Usuario:" + principal.getName() + "\n  Authorization: " + authorization;
 	}
 	
-	@GetMapping("/pass")
-	public String getPass(String pass) {
-		return passwordEncoder.encode(pass);
-	}
-	@GetMapping("/val")
-	public String getVal(String pass, String cmp) {
-		return passwordEncoder.matches(pass, cmp) ? "OK":"KO";
-	}
-	
-	@GetMapping("/admin")
+	@GetMapping("/solo-admin")
 	@SecurityRequirement(name = "bearerAuth")
 	public String getAdmin() {
 		return "El usuario es administrador";
+	}
+	
+	@GetMapping("/password/encode")
+	@SecurityRequirement(name = "bearerAuth")
+	public String getPass(String pass) {
+		return passwordEncoder.encode(pass);
+	}
+	@GetMapping("/password/validate")
+	@SecurityRequirement(name = "bearerAuth")
+	public String getVal(String pass, String cmp) {
+		return passwordEncoder.matches(pass, cmp) ? "OK":"KO";
 	}
 	
 	@Value("${jwt.secret}")
 	private String SECRET;
 	
 	@GetMapping("/secreto")
-	//@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@SecurityRequirement(name = "bearerAuth")
 	public String getSecreto() {
 		return SECRET;

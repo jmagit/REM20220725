@@ -19,8 +19,6 @@ public class WebSecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-//		config.setAllowCredentials(true);
-//		config.addAllowedOrigin("http://localhost:4200");
 		config.setAllowCredentials(false);
 		config.addAllowedOrigin("*");
 		config.addAllowedHeader("*");
@@ -40,11 +38,8 @@ public class WebSecurityConfig {
 			.csrf().disable()			
 			.addFilterAfter(new JWTAuthorizationFilter(SECRET), UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests()
-			.antMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-			.antMatchers("/actuator/**").permitAll()
-			.antMatchers("/login").permitAll()
-			.antMatchers(HttpMethod.GET, "/solo-admin").hasRole("ADMIN")
-			.anyRequest().authenticated();
+			.antMatchers("/v1/consultas/**").authenticated()//.hasRole("ADMIN")
+			.anyRequest().permitAll();
 		return http.build();
 	}
 }

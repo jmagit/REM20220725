@@ -1,6 +1,7 @@
 package com.example.application.resource;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class ActorResource {
 	}
 
 	@GetMapping(path = "/{id}")
-	public ActorDTO getOne(@PathVariable int id) throws NotFoundException {
+	public ActorDTO getOne(@PathVariable int id, Principal principal) throws NotFoundException {
 		var actor = srv.getOne(id);
 		if(actor.isEmpty())
 			throw new NotFoundException();

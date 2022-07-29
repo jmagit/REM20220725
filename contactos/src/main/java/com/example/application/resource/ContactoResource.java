@@ -39,7 +39,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.Value;
 
 @RestController
-@RequestMapping(path = "/api/contactos")
+@RequestMapping(path = "/api/v1/contactos")
 public class ContactoResource {
 	@Autowired
 	private ContactoRepository dao;
