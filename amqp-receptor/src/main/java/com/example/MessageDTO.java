@@ -20,7 +20,7 @@ public class MessageDTO implements Serializable {
 	public MessageDTO(String msg, String origen) {
 		this.msg = msg;
 		this.origen = origen;
-		enviado = new Date();
+		enviado = new Date(System.currentTimeMillis());
 	}
 
 }

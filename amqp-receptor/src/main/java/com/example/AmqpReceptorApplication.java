@@ -1,5 +1,6 @@
 package com.example;
 
+import java.util.Date;
 import java.util.logging.Logger;
 
 import org.springframework.amqp.core.Binding;
@@ -73,8 +74,10 @@ public class AmqpReceptorApplication {
 	private String origen;
 
 	@RabbitListener(queues = "demo.peticiones")
-	public MessageDTO responde(MessageDTO in) {
+	public MessageDTO responde(MessageDTO in) throws InterruptedException {
 		LOGGER.warning("SOLICITUD RECIBIDA: " + in);
+		Thread.sleep(in.getMsg().length() * 1000);
+		LOGGER.warning("RESPONDIENDO:" + new Date(System.currentTimeMillis()));
 		return new MessageDTO(in.toString(), origen);
 	}
 }
