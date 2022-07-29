@@ -38,7 +38,7 @@ public class WebSecurityConfig {
 			.csrf().disable()			
 			.addFilterAfter(new JWTAuthorizationFilter(SECRET), UsernamePasswordAuthenticationFilter.class)
 			.authorizeRequests()
-			.antMatchers("/v1/consultas/**").authenticated()//.hasRole("ADMIN")
+//			.antMatchers("/v1/consultas/**").authenticated()//.hasRole("ADMIN")
 			.anyRequest().permitAll();
 		return http.build();
 	}
